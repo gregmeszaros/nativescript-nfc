@@ -196,34 +196,8 @@ class NFCTagReaderSessionDelegateImpl extends NSObject implements NFCTagReaderSe
     var tag = tags[0];
     //let uid = this.getTagUID(tag);
 
-    session.connectToTagCompletionHandler(tag, (error) => {
-      console.log("connectToTagCompletionHandler");
-
-      console.log(error);
-      if (error) {
-        console.log(error); 
-        session.invalidateSessionWithErrorMessage("Error connecting to tag.");
-        return;
-      }
-
-      const ndefTag: NFCNDEFTag = new interop.Reference<NFCNDEFTag>(interop.types.id, tag).value;
-
-      NFCNDEFTag.prototype.queryNDEFStatusWithCompletionHandler.call(ndefTag, (status: NFCNDEFStatus, number: number, error: NSError) => {
-        console.log("queryNDEFStatusWithCompletionHandler");
-
-        if (error) {
-          console.log(error);
-          session.invalidateSessionWithErrorMessage("Error getting tag status.");
-          return;
-        }
-
-        if (true) {
-          this.writeNDEFTag(session, status, ndefTag);
-        } else {
-          /* just read tag */
-        }
-      });
-    });
+    var nfcHelper:NFCHelper = NFCHelper.new();
+    console.log(nfcHelper.getUID(tag)); // It WORKS!!!
   }
 
   public writeNDEFTag(session: NFCReaderSession, status: NFCNDEFStatus, tag: NFCNDEFTag) {
@@ -325,11 +299,15 @@ class NFCTagReaderSessionDelegateImpl extends NSObject implements NFCTagReaderSe
       tag.type = NFCTagType.MiFare;
       type = "MiFare";
 
-      let mifareTag: NFCMiFareTag = <NFCMiFareTag>NFCTag.prototype.asNFCMiFareTag.call(tag);
+      let mifareTag: NFCMiFareTag = NFCTag.prototype.asNFCMiFareTag.call(tag) as NFCMiFareTag;
 
-      console.log(mifareTag); // OK: displays <NFCMiFareTag: 0x2809bda70>
+      console.log(mifareTag.identifier); // OK: displays <NFCMiFareTag: 0x2809bda70>
 
       uid = NSData.alloc().initWithData(mifareTag.identifier);
+
+      /*var buffer = malloc(interop.sizeof(interop.types.UTF8CString));
+      uid.getBytes(buffer);
+      var reference = new interop.Reference(interop.types.UTF8CString, buffer);*/
 
       console.log(uid); // ISSUE: it displays {length = 0, bytes = 0x}
 
