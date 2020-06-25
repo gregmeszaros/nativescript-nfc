@@ -15,8 +15,7 @@
         "paths": {
             "*": [
                 "./node_modules/tns-core-modules/*",
-                "./node_modules/*",
-                "./platforms/ios/*"
+                "./node_modules/*"
             ],
             "~/*": [
                 "app/*"

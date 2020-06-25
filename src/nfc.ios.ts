@@ -196,8 +196,8 @@ class NFCTagReaderSessionDelegateImpl extends NSObject implements NFCTagReaderSe
     var tag = tags[0];
     //let uid = this.getTagUID(tag);
 
-    var nfcHelper:NFCHelper = NFCHelper.new();
-    console.log(nfcHelper.getUID(tag)); // It WORKS!!!
+    var nfcNHelper:NfcNativeHelper = NfcNativeHelper.new();
+    console.log(nfcNHelper.getUID(tag)); // It WORKS!!!
   }
 
   public writeNDEFTag(session: NFCReaderSession, status: NFCNDEFStatus, tag: NFCNDEFTag) {

@@ -1,1 +1,0 @@
-module libNFCHelper { explicit module libNFCHelper { header "NFCHelper.h" } }
