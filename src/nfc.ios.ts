@@ -193,11 +193,9 @@ class NFCTagReaderSessionDelegateImpl extends NSObject implements NFCTagReaderSe
   tagReaderSessionDidDetectTags?(session: NFCTagReaderSession, tags: NSArray<NFCTag> | NFCTag[]): void {
     console.log("tagReaderSessionDidDetectTags");
 
-    var tag = tags[0];
-    //let uid = this.getTagUID(tag);
+    let uid = this.getTagUID(tags[0]);
 
-    var nfcNHelper:NfcNativeHelper = NfcNativeHelper.new();
-    console.log(nfcNHelper.getUID(tag)); // It WORKS!!!
+    console.log("UID: " + uid);
   }
 
   public writeNDEFTag(session: NFCReaderSession, status: NFCNDEFStatus, tag: NFCNDEFTag) {
@@ -291,50 +289,9 @@ class NFCTagReaderSessionDelegateImpl extends NSObject implements NFCTagReaderSe
     console.log(error);
   }
 
-  getTagUID(tag: NFCTag): any {
-    let uid: NSData = null;
-    let type = "Unknown";
-
-    if (NFCTag.prototype.asNFCMiFareTag.call(tag) === tag) {
-      tag.type = NFCTagType.MiFare;
-      type = "MiFare";
-
-      let mifareTag: NFCMiFareTag = NFCTag.prototype.asNFCMiFareTag.call(tag) as NFCMiFareTag;
-
-      console.log(mifareTag.identifier); // OK: displays <NFCMiFareTag: 0x2809bda70>
-
-      uid = NSData.alloc().initWithData(mifareTag.identifier);
-
-      /*var buffer = malloc(interop.sizeof(interop.types.UTF8CString));
-      uid.getBytes(buffer);
-      var reference = new interop.Reference(interop.types.UTF8CString, buffer);*/
-
-      console.log(uid); // ISSUE: it displays {length = 0, bytes = 0x}
-
-      /* 
-      
-        Probably some more processing of uid is needed to convert from big-endian bytes to string:
-        https://stackoverflow.com/questions/46504035/little-endian-byte-order-ios-ble-scan-response
-        https://stackoverflow.com/questions/46518084/nativescript-get-string-from-interop-reference
-
-        let str = NSString.alloc().initWithDataEncoding(mifareTag.identifier, NSUTF16BigEndianStringEncoding);
-        console.log(str);
-
-      */
-    } else if (NFCTag.prototype.asNFCISO15693Tag.apply(tag) === tag) {
-      tag.type = NFCTagType.ISO15693;
-      type = "ISO15693";
-    } else if (NFCTag.prototype.asNFCISO7816Tag.apply(tag) === tag) {
-      tag.type = NFCTagType.ISO7816Compatible;
-      type = "NFCISO7816";
-    } else if (NFCTag.prototype.asNFCFeliCaTag.apply(tag) === tag) {
-      tag.type = NFCTagType.FeliCa;
-      type = "FeilCa";
-    }
-
-    console.log("Tag Type: " + type + " ( " + tag.type + " )");
-
-    return this.nsdataToHexArray(uid);
+  getTagUID(tag: NFCTag): string {
+    var nfcNHelper:NfcNativeHelper = NfcNativeHelper.new();
+    return nfcNHelper.getUID(tag);
   }
 
   private nsdataToHexString(data): string {
