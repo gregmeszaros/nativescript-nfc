@@ -422,12 +422,14 @@ export class Nfc implements NfcApi {
         // This allows to start it as soon as possible but only once.
         const foregroundActivity = application.android.foregroundActivity;
         this.nfcAdapter = android.nfc.NfcAdapter.getDefaultAdapter(application.android.context);
-        if (!this.started && this.nfcAdapter !== null && foregroundActivity) {
-          this.started = true;
-          this.nfcAdapter.enableForegroundDispatch(foregroundActivity, this.pendingIntent, this.intentFilters, this.techLists);
-          // handle any pending intent
-          nfcIntentHandler.parseMessage();
-        }
+        setTimeout(() => {
+          if (!this.started && this.nfcAdapter !== null && foregroundActivity) {
+            this.started = true;
+            this.nfcAdapter.enableForegroundDispatch(foregroundActivity, this.pendingIntent, this.intentFilters, this.techLists);
+            // handle any pending intent
+            nfcIntentHandler.parseMessage();
+          }
+        }, 3000);
       }
     }
   }
